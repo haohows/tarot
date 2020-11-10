@@ -37,6 +37,7 @@
   },
   "bundleDependencies": false,
   "dependencies": {
+    "jwt-decode": "^3.1.1",
     "node-sass": "^4.7.2",
     "sass-loader": "^6.0.6",
     "vue": "^2.5.2"
