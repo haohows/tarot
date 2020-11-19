@@ -101,10 +101,10 @@ export default {
       let box = this.$refs[this.id];
       this.imgbox = box;
       this.cover = box.querySelector(".mouse-cover");
-      this.cover.style.width = this.imgbox.offsetWidth / this.scale + "px";
+      this.cover.style.width = this.imgbox.offsetWidth  / this.scale + "px";
       this.cover.style.height = this.imgbox.offsetHeight / this.scale + "px";
-      this.cover.style.left = "-100%";
-      this.cover.style.top = "-100%";
+      this.cover.style.left = "100%";
+      this.cover.style.top = "100%";
       this.imgwrap = box.querySelector("img");
       let imgsrc;
       if (this.bigImgUrl) {
@@ -133,7 +133,7 @@ export default {
       this.canvas.className = "mouse-cover-canvas";
       this.canvas.style.position = "absolute";
       this.canvas.style.left =
-        this.imgbox.offsetLeft + this.imgbox.offsetWidth + 10 + "px";
+        this.imgbox.offsetLeft + this.imgbox.offsetWidth  + "px";
       this.canvas.style.top = this.imgbox.offsetTop + "px";
       this.canvas.style.border = "1px solid #eee";
       this.canvas.style.zIndex = "99999";
@@ -428,13 +428,13 @@ export default {
     background-color: rgba(0, 0, 0, 0.5);
     cursor: move;
   }
-  .mouse-cover-canvas {
-    position: fixed;
-    left: 100%;
-    top: 0;
-    width: 100%;
-    height: 100%;
-  }
+  // .mouse-cover-canvas {
+  //   position: fixed;
+  //   left: 100%;
+  //   top: 0;
+  //   width: 100%;
+  //   height: 100%;
+  // }
   &.vertical {
     img {
       height: 100%;
