@@ -21,7 +21,7 @@ export default {
   props: {
     scale: {
       type: Number,
-      default: 2.5,
+      default: 2,
     },
     url: {
       type: String,
@@ -62,6 +62,7 @@ export default {
       bigStep: 0,
       vertical: false,
       showImg: true,
+      cardScale: 2,
     };
   },
   created() {
@@ -89,6 +90,10 @@ export default {
       this.bigOrginUrl = bigUrl;
       this.initTime();
     },
+    scale(val) {
+      this.cardScale = val;
+      this.initTime();
+    },
   },
   mounted() {
     this.$nextTick(() => {
@@ -101,8 +106,8 @@ export default {
       let box = this.$refs[this.id];
       this.imgbox = box;
       this.cover = box.querySelector(".mouse-cover");
-      this.cover.style.width = this.imgbox.offsetWidth  / this.scale + "px";
-      this.cover.style.height = this.imgbox.offsetHeight / this.scale + "px";
+      this.cover.style.width = this.imgbox.offsetWidth / this.cardScale + "px";
+      this.cover.style.height = this.imgbox.offsetHeight / this.cardScale + "px";
       this.cover.style.left = "100%";
       this.cover.style.top = "100%";
       this.imgwrap = box.querySelector("img");
@@ -117,9 +122,9 @@ export default {
       this.img.src = imgsrc;
       this.img.onload = () => {
         (this.rectTimesX =
-          this.imgbox.offsetWidth / this.scale / this.imgwrap.offsetWidth),
+          this.imgbox.offsetWidth / this.cardScale / this.imgwrap.offsetWidth),
           (this.rectTimesY =
-            this.imgbox.offsetHeight / this.scale / this.imgwrap.offsetHeight);
+            this.imgbox.offsetHeight / this.cardScale / this.imgwrap.offsetHeight);
         (this.imgTimesX = this.img.width / this.imgwrap.offsetWidth),
           (this.imgTimesY = this.img.height / this.imgwrap.offsetHeight);
         this.vertical = this.img.width < this.img.height;
@@ -133,7 +138,7 @@ export default {
       this.canvas.className = "mouse-cover-canvas";
       this.canvas.style.position = "absolute";
       this.canvas.style.left =
-        this.imgbox.offsetLeft + this.imgbox.offsetWidth  + "px";
+        this.imgbox.offsetLeft + this.imgbox.offsetWidth+6 + "px";
       this.canvas.style.top = this.imgbox.offsetTop + "px";
       this.canvas.style.border = "1px solid #eee";
       this.canvas.style.zIndex = "99999";
@@ -163,11 +168,11 @@ export default {
         setTimeout(() => {
           (this.rectTimesX =
             this.imgbox.offsetWidth /
-            this.scale /
+            this.cardScale /
             box.querySelector("img").offsetWidth),
             (this.rectTimesY =
               this.imgbox.offsetHeight /
-              this.scale /
+              this.cardScale /
               box.querySelector("img").offsetHeight);
         }, 20);
       };
