@@ -3,7 +3,11 @@
     <div class="wrap">
       <div class="imagesView">
         <div class="pic-box">
-          <pic-zoom :url="cardData.url" :scale="scale"></pic-zoom>
+          <pic-zoom
+            :url="cardData.url"
+            :scale="scale"
+            ref="reverseApp"
+          ></pic-zoom>
         </div>
       </div>
       <div class="controArea">
@@ -11,9 +15,8 @@
           <i class="fas fa-search-plus"></i>
         </div>
 
-
         <div class="card mb-5 shadow card-description">
-          <h5 class="card-header">簡介說明</h5>
+          <h5 class="card-header">牌面描述</h5>
           <div class="card-body">
             <h5 class="card-title">{{ cardData.name }}</h5>
             <div class="cardTextArea">
@@ -29,9 +32,9 @@
             <label class="input-group-text">卡片名稱</label>
           </div>
           <select class="custom-select" v-model="cardData">
-            <option selected disabled :value="cardData">
+            <!-- <option selected disabled>
               -- 請選擇卡片 --
-            </option>
+            </option> -->
             <option v-for="item in card" :key="item.id" :value="item">
               {{ item.name }}
             </option>
@@ -69,8 +72,13 @@
             5x
           </button>
         </div>
-        <button class="btn btn-dark shadow" style="margin-left: 79px">
-          逆位
+        <button
+          class="btn btn-dark shadow"
+          style="margin-left: 79px"
+          @click="activeReverse"
+        >
+          <span v-if="isReverse">正位</span>
+          <span v-else>逆位</span>
         </button>
       </div>
     </div>
@@ -88,13 +96,12 @@ export default {
   data() {
     return {
       cardData: {
-        url:
-          "https://qqpublic.qpic.cn/qq_public/0/0-2249764024-3226A2D62B4A90C676066EE395342A43/0?fmt=jpg&size=23&h=889&w=500&ppv=1",
+        url: "./static/init.jpg",
         name: "咬咬咬",
-        text:
-          "這是一隻正在咬網路線的電氣鼠，這是一隻正在咬網路線的電氣鼠，這是一隻正在咬網路線的電氣鼠，這是一隻正在咬網路線的電氣鼠，這是一隻正在咬網路線的電氣鼠，這是一隻正在咬網路線的氣器鼠，這是一隻正在咬網路線的電氣鼠，這是一隻正在咬網路線的電氣鼠，這是一隻正在咬網路線的電氣鼠，這是一隻正在咬網路線的電氣鼠，這是一隻正在咬網路線的電氣鼠，這是一隻正在咬網路線的氣器鼠，這是一隻正在咬網路線的電氣鼠，這是一隻正在咬網路線的電氣鼠，這是一隻正在咬網路線的電氣鼠，這是一隻正在咬網路線的電氣鼠，這是一隻正在咬網路線的電氣鼠，這是一隻正在咬網路線的氣器鼠，這是一隻正在咬網路線的電氣鼠。",
+        text: "這是隻正在咬網路線的電氣鼠。",
       },
       scale: 2,
+      isReverse: false,
     };
   },
   computed: {
@@ -105,6 +112,10 @@ export default {
   methods: {
     changeScale(val) {
       this.scale = val;
+    },
+    activeReverse() {
+      this.isReverse = !this.isReverse;
+      this.$refs.reverseApp.$emit("rotateX2");
     },
   },
 };
@@ -180,6 +191,5 @@ export default {
     justify-content: center;
     align-items: center;
   }
-
 }
 </style>

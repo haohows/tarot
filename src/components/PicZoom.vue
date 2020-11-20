@@ -9,10 +9,9 @@
   >
     <img v-show="showImg" :src="imgUrl" alt="" />
     <div class="mouse-cover"></div>
-    <!-- <div class="edit-wrap" v-if="showEidt">
-            <span class="rotate-left" @click="rotate('left')"></span>
-            <span class="rotate-right" @click="rotate('right')"></span>
-        </div> -->
+    <!-- <div class="edit-wrap">
+      <span class="rotate-left" @click="rotateX2">12</span>
+    </div> -->
   </div>
 </template>
 
@@ -99,6 +98,9 @@ export default {
     this.$nextTick(() => {
       this.initTime();
     });
+        this.$on('rotateX2', function(){
+            this.rotateX2()
+        });
   },
   methods: {
     initTime() {
@@ -107,7 +109,8 @@ export default {
       this.imgbox = box;
       this.cover = box.querySelector(".mouse-cover");
       this.cover.style.width = this.imgbox.offsetWidth / this.cardScale + "px";
-      this.cover.style.height = this.imgbox.offsetHeight / this.cardScale + "px";
+      this.cover.style.height =
+        this.imgbox.offsetHeight / this.cardScale + "px";
       this.cover.style.left = "100%";
       this.cover.style.top = "100%";
       this.imgwrap = box.querySelector("img");
@@ -124,7 +127,9 @@ export default {
         (this.rectTimesX =
           this.imgbox.offsetWidth / this.cardScale / this.imgwrap.offsetWidth),
           (this.rectTimesY =
-            this.imgbox.offsetHeight / this.cardScale / this.imgwrap.offsetHeight);
+            this.imgbox.offsetHeight /
+            this.cardScale /
+            this.imgwrap.offsetHeight);
         (this.imgTimesX = this.img.width / this.imgwrap.offsetWidth),
           (this.imgTimesY = this.img.height / this.imgwrap.offsetHeight);
         this.vertical = this.img.width < this.img.height;
@@ -138,7 +143,7 @@ export default {
       this.canvas.className = "mouse-cover-canvas";
       this.canvas.style.position = "absolute";
       this.canvas.style.left =
-        this.imgbox.offsetLeft + this.imgbox.offsetWidth+6 + "px";
+        this.imgbox.offsetLeft + this.imgbox.offsetWidth + 6 + "px";
       this.canvas.style.top = this.imgbox.offsetTop + "px";
       this.canvas.style.border = "1px solid #eee";
       this.canvas.style.zIndex = "99999";
@@ -296,90 +301,93 @@ export default {
       this.cover.style.display = "none";
       this.canvas.style.display = "none";
     },
-    // rotate(direction){
-    //     var orginImg=new Image()
-    //     orginImg.crossOrigin = "Anonymous";
-    //     orginImg.src=this.orginUrl
-    //     orginImg.onload=()=>{
-    //         this.rotateImg(orginImg,direction,this.step)
-    //     }
-    //     if(this.bigOrginUrl){
-    //         var bigOrginImg=new Image()
-    //         orginImg.crossOrigin = "Anonymous";
-    //         bigOrginImg.src=this.bigOrginUrl
-    //         bigOrginImg.onload=()=>{
-    //             this.rotateImg(bigOrginImg,direction,this.bigStep,true)
-    //         }
-    //     }
+    rotate(direction) {
+      var orginImg = new Image();
+      orginImg.crossOrigin = "Anonymous";
+      orginImg.src = this.orginUrl;
+      orginImg.onload = () => {
+        this.rotateImg(orginImg, direction, this.step);
+      };
+      if (this.bigOrginUrl) {
+        var bigOrginImg = new Image();
+        orginImg.crossOrigin = "Anonymous";
+        bigOrginImg.src = this.bigOrginUrl;
+        bigOrginImg.onload = () => {
+          this.rotateImg(bigOrginImg, direction, this.bigStep, true);
+        };
+      }
+    },
+    rotateImg(img, direction, step, isBig = false) {
+      var min_step = 0;
+      var max_step = 3;
+      if (img == null) return;
+      //img的高度和宽度不能在img元素隐藏后获取，否则会出错
+      var height = img.height;
+      var width = img.width;
 
-    // },
-    // rotateImg(img,direction,step,isBig=false){
-    //     var min_step = 0;
-    //     var max_step = 3;
-    //     if (img == null) return;
-    //     //img的高度和宽度不能在img元素隐藏后获取，否则会出错
-    //     var height = img.height;
-    //     var width = img.width;
+      if (step == null) {
+        step = min_step;
+      }
+      if (direction == "right") {
+        step++;
+        //旋转到原位置，即超过最大值
+        step > max_step && (step = min_step);
+      } else {
+        step--;
+        step < min_step && (step = max_step);
+      }
+      var canvas = document.createElement("canvas");
 
-    //     if (step == null) {
-    //         step = min_step;
-    //     }
-    //     if (direction == 'right') {
-    //         step++;
-    //         //旋转到原位置，即超过最大值
-    //         step > max_step && (step = min_step);
-    //     } else {
-    //         step--;
-    //         step < min_step && (step = max_step);
-    //     }
-    //     var canvas = document.createElement('canvas')
+      //旋转角度以弧度值为参数
+      var degree = (step * 90 * Math.PI) / 180;
+      var ctx = canvas.getContext("2d");
+      canvas.width = height;
+      canvas.height = width;
+      ctx.rotate(degree);
+      ctx.drawImage(img, 0, -height);
+      switch (step) {
+        case 0:
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0);
+          break;
+        case 1:
+          canvas.width = height;
+          canvas.height = width;
+          ctx.rotate(degree);
+          ctx.drawImage(img, 0, -height);
+          break;
+        case 2:
+          canvas.width = width;
+          canvas.height = height;
+          ctx.rotate(degree);
+          ctx.drawImage(img, -width, -height);
+          break;
+        case 3:
+          canvas.width = height;
+          canvas.height = width;
+          ctx.rotate(degree);
+          ctx.drawImage(img, -width, 0);
+          break;
+      }
+      var newImg = canvas.toDataURL();
 
-    //     //旋转角度以弧度值为参数
-    //     var degree = step * 90 * Math.PI / 180;
-    //     var ctx = canvas.getContext('2d');
-    //     canvas.width = height;
-    //     canvas.height = width;
-    //     ctx.rotate(degree);
-    //     ctx.drawImage(img, 0, -height);
-    //     switch (step) {
-    //         case 0:
-    //             canvas.width = width;
-    //             canvas.height = height;
-    //             ctx.drawImage(img, 0, 0);
-    //             break;
-    //         case 1:
-    //             canvas.width = height;
-    //             canvas.height = width;
-    //             ctx.rotate(degree);
-    //             ctx.drawImage(img, 0, -height);
-    //             break;
-    //         case 2:
-    //             canvas.width = width;
-    //             canvas.height = height;
-    //             ctx.rotate(degree);
-    //             ctx.drawImage(img, -width, -height);
-    //             break;
-    //         case 3:
-    //             canvas.width = height;
-    //             canvas.height = width;
-    //             ctx.rotate(degree);
-    //             ctx.drawImage(img, -width, 0);
-    //             break;
-    //     }
-    //     var newImg=canvas.toDataURL()
-
-    //     if(isBig){
-    //         this.bigImgUrl=newImg
-    //         this.bigStep=step
-    //         this.initBox()
-    //     }else{
-    //         this.imgUrl=newImg
-    //         this.step=step
-    //         this.$nextTick(()=>{
-    //             this.initBox()
-    //         })
-    //     }
-    // },
+      if (isBig) {
+        this.bigImgUrl = newImg;
+        this.bigStep = step;
+        this.initBox();
+      } else {
+        this.imgUrl = newImg;
+        this.step = step;
+        this.$nextTick(() => {
+          this.initBox();
+        });
+      }
+    },
+    rotateX2() {
+      this.rotate("left");
+      this.rotate("left");
+    },
   },
 };
 </script>
